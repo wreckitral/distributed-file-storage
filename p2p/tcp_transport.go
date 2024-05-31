@@ -19,4 +19,33 @@ func NewTCPTransport(listenAddr string) *TCPTransport {
     }
 }
 
+// this method sets up TCP listener and accept incoming connections
+func (t *TCPTransport) ListenAndAccept() error {
+    var err error
 
+    t.listener, err = net.Listen("tcp", t.listenAddress)
+    if err != nil {
+        return err
+    }
+
+    go t.startAcceptLoop()
+
+    return nil
+}
+
+// helper method for accepting and handling incoming connections
+func (t *TCPTransport) startAcceptLoop() {
+    for {
+        conn, err := t.listener.Accept()
+        if err != nil {
+            fmt.Printf("TCP accept error: %s\n", err) 
+        }
+
+        go t.handleConn(conn)
+    }
+}
+
+// helper func handling individual connection
+func (t *TCPTransport) handleConn(conn net.Conn) {
+    fmt.Printf("new incoming connection %+v\n", conn)
+}
