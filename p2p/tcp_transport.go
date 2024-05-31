@@ -1,9 +1,27 @@
 package p2p
 
 import (
+	"fmt"
 	"net"
 	"sync"
 )
+
+// TCPPeer represents the remote node 
+type TCPPeer struct {
+    // conn is the underlying connections of the peer
+    conn net.Conn
+    
+    // if we dial and retrieve a connection, outbound := true
+    // if we accept and retrieve a connection, outbound := false
+    outbound bool
+}
+
+func NewTCPPeer(conn net.Conn, outbound bool) *TCPPeer {
+    return &TCPPeer{
+        conn: conn,
+        outbound: outbound,
+    }
+}
 
 type TCPTransport struct {
     listenAddress string
@@ -47,5 +65,6 @@ func (t *TCPTransport) startAcceptLoop() {
 
 // helper func handling individual connection
 func (t *TCPTransport) handleConn(conn net.Conn) {
-    fmt.Printf("new incoming connection %+v\n", conn)
+    peer := NewTCPPeer(conn, true)
+    fmt.Printf("new incoming connection %+v\n", peer)
 }
