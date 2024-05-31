@@ -1,7 +1,6 @@
 package p2p
 
 import (
-	"bytes"
 	"fmt"
 	"net"
 	"sync"
@@ -85,11 +84,15 @@ func (t *TCPTransport) handleConn(conn net.Conn) {
     }
     
     // Read loop
-    msg := &Temp{}
+    msg := &Message{}
     for {
         if err := t.Decoder.Decode(conn, msg); err != nil {
             fmt.Printf("tcp error: %s\n", err)
             continue
         }
+
+        msg.From = conn.RemoteAddr()
+
+        fmt.Printf("message:%+v\n", msg)
     }
 }
